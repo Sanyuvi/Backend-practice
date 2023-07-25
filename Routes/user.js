@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import { addUser, getUser } from "../Controllers/user.js";
+import { addUser, getUser, generateToken } from "../Controllers/user.js";
+
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
@@ -46,7 +47,8 @@ router.post("/login", async (req, res) => {
     if (!validPassword) {
       return res.status(400).send({ message: "Invalid Password" });
     }
-    res.status(200).send(user);
+    const token = generateToken(user._id);
+    res.status(200).send({ data: user, token: token });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Internal server error" });
